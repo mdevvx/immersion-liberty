@@ -37,7 +37,7 @@ def can_claim(discord_id, quest):
             .select("id")
             .eq("discord_id", discord_id)
             .eq("thread_id", quest["thread_id"])
-            .gte("claimed_at", str(date.today()))
+            .filter("claimed_at", "gte", f"{date.today()}T00:00:00Z")
             .execute()
         )
         return not res.data

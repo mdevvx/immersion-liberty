@@ -3,6 +3,14 @@ from discord.ext import commands
 from services.quest_service import get_quest, save_quest, can_claim, award_points
 
 
+def build_claim_warning(quest: dict) -> str:
+    if quest["tag"] == "obligatoire":
+        return "⛔ You have already completed this quest."
+    if quest["tag"] == "journaliere":
+        return "⏳ You have already completed this quest today. Come back tomorrow!"
+    return "⛔ You cannot claim this quest right now."
+
+
 class Quests(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
@@ -109,8 +117,21 @@ class Quests(commands.Cog):
         if not images:
             return
 
+        # if not can_claim(str(message.author.id), quest):
+        #     await message.add_reaction("⛔")
+        #     return
+
         if not can_claim(str(message.author.id), quest):
+            warning_text = build_claim_warning(quest)
+
             await message.add_reaction("⛔")
+
+            warn_msg = await message.channel.send(
+                warning_text, reference=message, mention_author=False
+            )
+
+            # Auto-delete warning after 10 seconds (prevents spam)
+            await warn_msg.delete(delay=10)
             return
 
         if len(images) >= quest["images_required"]:
