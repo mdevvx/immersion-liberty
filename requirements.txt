@@ -2,3 +2,6 @@ discord.py
 python-dotenv
 gspread
 google-auth
+supabase
+supabase_auth
+supabase_functions
