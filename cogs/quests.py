@@ -45,6 +45,11 @@ class Quests(commands.Cog):
 
         points = get_user_points(str(interaction.user.id))
 
+        if not points:
+            return await interaction.response.send_message(
+                "No points yet.", ephemeral=True
+            )
+
         await interaction.response.send_message(
             f"🏆 **Your Points:** {points}", ephemeral=True
         )
@@ -101,7 +106,7 @@ class Quests(commands.Cog):
 
         if len(images) >= quest["images_required"]:
             award_points(str(message.author.id), quest)
-            await message.add_reaction("✅")
+
             reward_text = (
                 quest["reward_message"]
                 .replace("{points}", str(quest["points"]))
@@ -109,7 +114,11 @@ class Quests(commands.Cog):
                 .replace("{quest}", message.channel.name)
             )
 
-            await message.reply(reward_text, mention_author=False)
+            await message.add_reaction("✅")
+
+            await message.channel.send(
+                reward_text, reference=message, mention_author=False
+            )
 
         else:
             await message.add_reaction("📸")
