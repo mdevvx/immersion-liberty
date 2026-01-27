@@ -37,4 +37,11 @@ async def on_ready():
     print(f"Logged in as {bot.user} ({bot.user.id})")
 
 
-bot.run(os.getenv("DISCORD_TOKEN"))
+import time
+
+while True:
+    try:
+        bot.run(os.getenv("DISCORD_TOKEN"))
+    except Exception as e:
+        print("Bot crashed:", e)
+        time.sleep(60)  # wait 60 seconds before retry
