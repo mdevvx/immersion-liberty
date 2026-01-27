@@ -68,10 +68,14 @@ class Quests(commands.Cog):
             )
 
         lines = []
-        for i, row in enumerate(data, start=1):
-            user = interaction.guild.get_member(int(row["discord_id"]))
-            name = user.display_name if user else "Unknown"
-            lines.append(f"**{i}.** {name} — {row['points']} pts")
+        # for i, row in enumerate(data, start=1):
+        #     user = interaction.guild.get_member(int(row["discord_id"]))
+        #     name = user.display_name if user else "Unknown"
+        #     lines.append(f"**{i}.** {name} — {row['points']} pts")
+
+        for i, row in enumerate(data, 1):
+            mention = f"<@{row['discord_id']}>"
+            lines.append(f"**{i}.** {mention} — {row['points']} pts")
 
         embed = discord.Embed(
             title="🏆 Leaderboard",
