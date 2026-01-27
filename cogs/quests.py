@@ -8,26 +8,31 @@ class Quests(commands.Cog):
         self.bot = bot
 
     # ADMIN COMMAND
-    @discord.app_commands.command(name="configure_quest")
+    @discord.app_commands.command(
+        name="configure_quest",
+        description="Configure a quest for this forum post (points, images & reward message)",
+    )
     @discord.app_commands.checks.has_permissions(administrator=True)
     async def configure_quest(
         self, interaction, points: int, images_required: int, reward_message: str
     ):
+        await interaction.response.send_message("⏳ Configuring quest…", ephemeral=True)
+
         thread = interaction.channel
 
         if not isinstance(thread, discord.Thread):
-            return await interaction.response.send_message(
-                "❌ Use this inside a quest thread.", ephemeral=True
+            return await interaction.followup.send(
+                "❌ This command must be used inside a quest thread.", ephemeral=True
             )
 
         if not thread.applied_tags:
-            return await interaction.response.send_message(
-                "❌ Quest must have a tag.", ephemeral=True
+            return await interaction.followup.send(
+                "❌ Quest must have a tag (Obligatoire or Journaliere).", ephemeral=True
             )
 
         tag = thread.applied_tags[0].name.lower()
         if tag not in ("obligatoire", "journaliere"):
-            return await interaction.response.send_message(
+            return await interaction.followup.send(
                 "❌ Invalid quest tag.", ephemeral=True
             )
 
@@ -35,7 +40,7 @@ class Quests(commands.Cog):
             thread.id, thread.parent_id, tag, points, images_required, reward_message
         )
 
-        await interaction.response.send_message(
+        await interaction.followup.send(
             "✅ Quest configured successfully.", ephemeral=True
         )
 
