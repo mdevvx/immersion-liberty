@@ -39,6 +39,43 @@ class Quests(commands.Cog):
             "✅ Quest configured successfully.", ephemeral=True
         )
 
+    @discord.app_commands.command(name="points", description="View your points")
+    async def points(self, interaction):
+        from services.quest_service import get_user_points
+
+        points = get_user_points(str(interaction.user.id))
+
+        await interaction.response.send_message(
+            f"🏆 **Your Points:** {points}", ephemeral=True
+        )
+
+    @discord.app_commands.command(
+        name="leaderboard", description="Top 10 users by points"
+    )
+    async def leaderboard(self, interaction):
+        from services.quest_service import get_leaderboard
+
+        data = get_leaderboard()
+
+        if not data:
+            return await interaction.response.send_message(
+                "No data yet.", ephemeral=True
+            )
+
+        lines = []
+        for i, row in enumerate(data, start=1):
+            user = interaction.guild.get_member(int(row["discord_id"]))
+            name = user.display_name if user else "Unknown"
+            lines.append(f"**{i}.** {name} — {row['points']} pts")
+
+        embed = discord.Embed(
+            title="🏆 Leaderboard",
+            description="\n".join(lines),
+            color=discord.Color.gold(),
+        )
+
+        await interaction.response.send_message(embed=embed)
+
     # USER IMAGE LISTENER
     @commands.Cog.listener()
     async def on_message(self, message: discord.Message):
@@ -76,39 +113,6 @@ class Quests(commands.Cog):
 
         else:
             await message.add_reaction("📸")
-
-
-@discord.app_commands.command(name="points", description="View your points")
-async def points(self, interaction: discord.Interaction):
-    from services.quest_service import get_user_points
-
-    points = get_user_points(str(interaction.user.id))
-
-    await interaction.response.send_message(
-        f"🏆 **Your Points:** {points}", ephemeral=True
-    )
-
-
-@discord.app_commands.command(name="leaderboard", description="Top 10 users by points")
-async def leaderboard(self, interaction: discord.Interaction):
-    from services.quest_service import get_leaderboard
-
-    data = get_leaderboard()
-
-    if not data:
-        return await interaction.response.send_message("No data yet.", ephemeral=True)
-
-    lines = []
-    for i, row in enumerate(data, start=1):
-        user = interaction.guild.get_member(int(row["discord_id"]))
-        name = user.display_name if user else "Unknown"
-        lines.append(f"**{i}.** {name} — {row['points']} pts")
-
-    embed = discord.Embed(
-        title="🏆 Leaderboard", description="\n".join(lines), color=discord.Color.gold()
-    )
-
-    await interaction.response.send_message(embed=embed)
 
 
 async def setup(bot):
