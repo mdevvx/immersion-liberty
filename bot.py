@@ -22,6 +22,7 @@ class MyBot(commands.Bot):
         # Load cogs here
         await self.load_extension("cogs.verification_commands")
         await self.load_extension("cogs.member_events")
+        await self.load_extension("cogs.quests")
 
         # Sync slash commands
         await self.tree.sync()
