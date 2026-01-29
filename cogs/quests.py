@@ -5,10 +5,10 @@ from services.quest_service import get_quest, save_quest, can_claim, award_point
 
 def build_claim_warning(quest: dict) -> str:
     if quest["tag"] == "obligatoire":
-        return "⛔ You have already completed this quest."
+        return "⛔ Vous avez déjà terminé cette quête."
     if quest["tag"] == "journaliere":
-        return "⏳ You have already completed this quest today. Come back tomorrow!"
-    return "⛔ You cannot claim this quest right now."
+        return "⏳ Vous avez déjà terminé cette quête aujourd'hui. Revenez demain !"
+    return "⛔ Vous ne pouvez pas accepter cette quête pour le moment."
 
 
 class Quests(commands.Cog):
@@ -52,7 +52,7 @@ class Quests(commands.Cog):
             "✅ Quest configured successfully.", ephemeral=True
         )
 
-    @discord.app_commands.command(name="points", description="View your points")
+    @discord.app_commands.command(name="points", description="Visualisez vos points")
     async def points(self, interaction):
         from services.quest_service import get_user_points
 
@@ -60,15 +60,15 @@ class Quests(commands.Cog):
 
         if not points:
             return await interaction.response.send_message(
-                "No points yet.", ephemeral=True
+                "Aucun point pour l'instant.", ephemeral=True
             )
 
         await interaction.response.send_message(
-            f"🏆 **Your Points:** {points}", ephemeral=True
+            f"🏆 **Vos points:** {points}", ephemeral=True
         )
 
     @discord.app_commands.command(
-        name="leaderboard", description="Top 10 users by points"
+        name="leaderboard", description="Les 10 meilleurs utilisateurs par points"
     )
     async def leaderboard(self, interaction):
         from services.quest_service import get_leaderboard
@@ -77,7 +77,7 @@ class Quests(commands.Cog):
 
         if not data:
             return await interaction.response.send_message(
-                "No data yet.", ephemeral=True
+                "Aucune donnée pour l'instant.", ephemeral=True
             )
 
         lines = []
