@@ -52,8 +52,8 @@ class Quests(commands.Cog):
             "✅ Quest configured successfully.", ephemeral=True
         )
 
-    @discord.app_commands.command(name="points", description="Visualisez vos points")
-    async def points(self, interaction):
+    @discord.app_commands.command(name="score", description="Visualisez vos points")
+    async def score(self, interaction):
         from services.quest_service import get_user_points
 
         points = get_user_points(str(interaction.user.id))
